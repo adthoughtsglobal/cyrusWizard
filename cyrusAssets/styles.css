@@ -14,13 +14,13 @@ body {
 @font-face {
     font-family: 'Material Symbols Rounded';
     font-style: normal;
-    src: url("assets/icons.woff2") format('woff2');
+    src: url("../assets/icons.woff2") format('woff2');
 }
 
 @font-face {
     font-family: "Google Sans";
     font-style: normal;
-    src: url("assets/google_sans.ttf") format('truetype');
+    src: url("../assets/google_sans.ttf") format('truetype');
 }
 
 .icn {
@@ -35,6 +35,15 @@ body {
     -webkit-font-smoothing: antialiased;
     font-variation-settings: 'FILL' 0;
     transition: font-variation-settings 0.3s ease;
+}
+
+#cyrus-root {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &.show {
+        opacity: 1;
+    }
 }
 
 .cryus_dialog {
@@ -188,7 +197,7 @@ body {
     filter: blur(1px);
 }
 
-.weareconnected {
+#weareconnected {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -203,6 +212,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    animation: wearesodone .3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
     &>h1 {
         margin: .2em;
@@ -212,5 +222,58 @@ body {
         position: absolute;
         bottom: 3em;
         opacity: .5;
+    }
+
+    & .doneicn {
+        font-size: 6em;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: .5em;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: scale(1.5);
+            background: rgba(225, 225, 225, .1);
+            border-radius: 50%;
+            animation: breathing 3s infinite;
+        }
+    }
+}
+
+@keyframes wearesodone {
+    0% {
+        opacity: 0;
+        filter: saturate(0);
+    }
+
+    100% {
+        opacity: 1;
+        filter: saturate(1);
+    }
+}
+
+@keyframes breathing {
+
+    0% {
+        width: 50%;
+        height: 50%;
+        opacity: 0;
+    }
+
+    50% {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+    }
+
+    100% {
+        width: 130%;
+        height: 130%;
+        opacity: 0;
     }
 }
