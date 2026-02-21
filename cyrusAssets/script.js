@@ -14,8 +14,8 @@ const loadAssets = async () => {
         document.body.appendChild(script);
     });
 
-    await loadCSS('cyrusAssets/styles.css');
-    await loadJS('cyrusAssets/reqs.js');
+    await loadCSS('cyrusWizard/cyrusAssets/styles.css');
+    await loadJS('cyrusWizard/cyrusAssets/reqs.js');
 };
 
 loadAssets().then(() => {
