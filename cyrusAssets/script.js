@@ -23,46 +23,65 @@ loadAssets().then(() => {
 
     document.dispatchEvent(new Event("CyrusReady"));
     dialog.show()
-});
-class CyrusPeerManager {
+});class CyrusPeerManager {
     constructor() {
         this.peer = new Peer()
         this.conn = null
+        this.callConn = null
         this.handlers = {}
 
         this.peer.on('open', id => {
-            console.log('My peer ID:', id)
             this.trigger('open', id)
         })
 
         this.peer.on('connection', conn => {
-            this.setupConnection(conn)
+            this.setupDataConnection(conn)
+        })
+
+        this.peer.on('call', call => {
+            this.setupMediaConnection(call)
         })
     }
 
     connectTo(id) {
         const conn = this.peer.connect(id)
-        this.setupConnection(conn)
+        this.setupDataConnection(conn)
     }
 
-    setupConnection(conn) {
+    call(stream) {
+        if (!this.conn?.peer) return
+        const call = this.peer.call(this.conn.peer, stream)
+        this.setupMediaConnection(call)
+    }
+
+    setupDataConnection(conn) {
         this.conn = conn
 
         conn.on('open', () => {
-            console.log('Connected to', conn.peer)
-            document.dispatchEvent(new Event('CyrusConnected'))
             this.trigger('connected', conn.peer)
-            dialog.close()
         })
 
         conn.on('data', data => {
-            console.log('Received:', data)
             this.trigger('data', data)
         })
 
         conn.on('close', () => {
             this.conn = null
             this.trigger('close')
+        })
+    }
+
+    setupMediaConnection(call) {
+        this.callConn = call
+
+        call.answer()
+
+        call.on('stream', remoteStream => {
+            this.trigger('stream', remoteStream)
+        })
+
+        call.on('close', () => {
+            this.callConn = null
         })
     }
 
@@ -79,7 +98,6 @@ class CyrusPeerManager {
         (this.handlers[event] || []).forEach(cb => cb(...args))
     }
 }
-
 class CyrusDialog {
     constructor(rootId) {
         this.root = document.getElementById(rootId)
